@@ -1,4 +1,0 @@
-pymupdf4llm
-pandas
-openpyxl
-tqdm
