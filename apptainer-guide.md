@@ -22,6 +22,9 @@ jutil env activate -p cjinm16
 
 # create symlink (adapt target directory if needed)
 ln -sr ~/.apptainer ${PROJECT}/${USER}/.apptainer
+
+# check if succesfull
+ls -l ~/.apptainer
 ```
 
 ## Pull an image
