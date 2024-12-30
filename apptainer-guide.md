@@ -113,3 +113,57 @@ apptainer exec --nv bash execute_with_venv.sh pip install matplotlib
 # example: run a script
 apptainer exec --nv bash execute_with_venv.sh python my_script.py
 ```
+
+## Connect to huggingface
+
+Find a suitable place for the huggingface container, e.g.
+```bash
+cd ${PROJECT}/${USER}/tmp
+```
+build the container
+```bash
+apptainer build huggingface.sif docker://huggingface/transformers-pytorch-gpu
+```
+To run an LLM, you should download the weights separately in advance because certain nodes might not be connected to the internet. 
+First, log in to huggingface. If you don't have an account, make sure to sign up. Before downloading the model weights, you most likely need to **agree to share your contact information to access the model** in the respective model card on huggingface. Next, create a token with **Read access to contents of all public gated repos you can access** by clicking on your user profile in the upper right corner and then on Access Token. Copy the token and enter it on the hpc after 
+```bash
+apptainer exec ${PROJECT}/${USER}/tmp/huggingface.sif huggingface-cli login
+```
+You don't need to add the token as git credentials because it is not possible to authenticate through git-credential as no helper is defined on the machine. Adding the token has been successful if it says the following and the token names match.
+```bash
+Login successful.
+The current active token is: `token_name`
+```
+Now the weights can be downloaded:
+```bash
+apptainer exec tmp/huggingface.sif python3 download_model.py
+```
+example download_model.py file:
+```bash
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+# Specify the model name
+model_name = "mistralai/Mistral-7B-Instruct-v0.3"
+
+# Download and cache the model and tokenizer
+AutoModelForCausalLM.from_pretrained(model_name)
+AutoTokenizer.from_pretrained(model_name)
+
+[kark1@jrlogin10 kark1]$ nano download_model.py 
+-bash: nano: Kommando nicht gefunden.
+[kark1@jrlogin10 kark1]$ vi download_model.py 
+[kark1@jrlogin10 kark1]$ cat download_model.py 
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+# Specify the model name
+model_name = "mistralai/Mistral-7B-Instruct-v0.3"
+
+# Define cache directory
+cache_dir = "./huggingface_cache"
+
+# Download and cache the model
+print(f"Downloading model {model_name}...")
+tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=cache_dir)
+model = AutoModelForCausalLM.from_pretrained(model_name, cache_dir=cache_dir)
+print(f"Model {model_name} downloaded successfully and cached at {cache_dir}.")
+```
