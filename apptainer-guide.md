@@ -145,19 +145,6 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 # Specify the model name
 model_name = "mistralai/Mistral-7B-Instruct-v0.3"
 
-# Download and cache the model and tokenizer
-AutoModelForCausalLM.from_pretrained(model_name)
-AutoTokenizer.from_pretrained(model_name)
-
-[kark1@jrlogin10 kark1]$ nano download_model.py 
--bash: nano: Kommando nicht gefunden.
-[kark1@jrlogin10 kark1]$ vi download_model.py 
-[kark1@jrlogin10 kark1]$ cat download_model.py 
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-# Specify the model name
-model_name = "mistralai/Mistral-7B-Instruct-v0.3"
-
 # Define cache directory
 cache_dir = "./huggingface_cache"
 
